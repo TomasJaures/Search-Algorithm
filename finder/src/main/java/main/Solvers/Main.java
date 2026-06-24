@@ -1,58 +1,122 @@
 package main.Solvers;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
     public static Scanner sc = new Scanner(System.in);
-
+    public static String graphFilesPath = "finder\\src\\main\\resources\\CSVs\\Graphs";
+    public static String mazeFilesPath = "finder\\src\\main\\resources\\CSVs\\Mazes";
     
 
     public static void main(String[] args) {
-        //GraphSolver.run(1);
-        //GraphSolver.run(2);
-        //GraphSolver.run(2);
-        MazeSolver.run(2);
 
-        /*
-        while (true) {    
-            System.out.println("¿Que operacion desea realizar? ");
-            System.out.println("[1] Laberinto");
-            System.out.println("[2] Grafo");
+        boolean tmp = true;
+        while (tmp) {
+            System.out.println(
+                """
+                ========================================
+                Manual de uso en README.md
+                
+                ¿Que tipo de estructura desea indagar?
+                [0] : Grafo
+                [1] : Laberinto
+                ========================================
+                """
+            );
             System.out.print("> ");
-            int inp = sc.nextInt();
-            sc.nextLine();
+            int r = sc.nextInt();
+            sc.nextLine(); //Limbiar buffer
 
-            if(inp==1) maze();
-            if(inp==2) graph();
-            System.out.println("Input no valido");
+            if (r == 0) graph();
+            if (r == 1) maze();
+            if (r > 1 || r < 0) System.out.println("Seleccione un dato valido");
         }
-        */
         
     }
 
     public static void maze() {
-        System.out.println("Haz seleccionado el Laberinto");
-        printOptions();
-        int inp = sc.nextInt();
-        MazeSolver.run(inp);
+        Path path = selectMazeFile();
+        MazeSolver.run(path);
     }
 
     public static void graph() {
-        System.out.println("Haz seleccionado el grafo");
-        printOptions();
-        int inp = sc.nextInt();
-        GraphSolver.run(inp);
+        System.out.print(
+            """
+            ========================================
+            Haz seleccionado el Grafo
+
+            Porfavor, seleccione el tipo de algoritmo que desea realizar:
+
+            [0] BFS
+            [1] DFS
+            [2] UCS
+            [3] A*
+            ========================================
+            >  """
+        );
+        
+        int r = sc.nextInt();
+        sc.nextLine();
+        Path path = selectGraphFile();
+        GraphSolver.run(path, r);
     }
 
-    public static void printOptions(){
-        System.out.println("[1] BFS");
-        System.out.println("[2] DFS");
-        System.out.println("[3] BFS");
-        System.out.println("[4] BFS");
-        System.out.println("[5] BFS");
+    public static Path selectGraphFile() {
+        List<Path> files = getFiles(graphFilesPath);
+        String content = "";
+        for (int i = 0; i < files.size(); i++) {
+            content += "\n[" + i + "] " + files.get(i).getFileName();
+        }
 
-        System.out.print("> ");
+        System.out.print(
+        """
+        ========================================
+        Seleccione el archivo que desea aplicale el algoritmo: 
+        %s
+        ========================================
+        > 
+        """.formatted(content)
+        );
+
+        return files.get(sc.nextInt());
+    }
+
+    public static Path selectMazeFile() {
+        List<Path> files = getFiles(mazeFilesPath);
+        String content = "";
+        for (int i = 0; i < files.size(); i++) {
+            content += "\n[" + i + "] " + files.get(i).getFileName();
+        }
+
+        System.out.print(
+        """
+        ========================================
+        Seleccione el archivo que desea aplicale el algoritmo: 
+        %s
+        ========================================
+        > 
+        """.formatted(content)
+        );
+        
+        return files.get(sc.nextInt());
+    }
+
+    
+
+    public static List<Path> getFiles(String path) {
+        List<Path> files = null;
+        try {
+           files = Files.list(Path.of(path)).filter(Files::isRegularFile).toList();
+        } catch (IOException e) {
+            System.err.println("Error al leer la carpeta: " + e.getMessage());
+        }
+
+        return files;
     }
 
 }

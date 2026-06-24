@@ -1,5 +1,6 @@
 package main.Solvers;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,14 +25,21 @@ public class GraphSolver {
     public static final int startedNode = 0; //A
     public static final int finalNode = 5; //F
 
-    public static void run(int flag){
-        
+    public static void run(Path path, int flag){
+        //[0] BFS
+        //[1] DFS
+        //[2] UCS
+        //[3] A*
 
+        
+        
         System.out.println("Algorithm: ");
+        /*
         if (flag == 1) bfs();
         if (flag == 2) dfs();
         if (flag == 3) ucs();
         if (flag == 4) A(); //A*
+         */
     }
 
     public static void bfs() {

@@ -3,35 +3,40 @@ package main.Solvers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Set;
 import java.util.Stack;
 
-public class GraphSolver {
 
-    public static final int[][] graph = {
-    //   A  B  C  D  E  F  G
-        {0, 1, 1, 1, 0, 0, 0}, //A (0)
-        {1, 0, 0, 0, 0, 0, 1}, //B (1)
-        {1, 0, 0, 1, 1, 0, 1}, //C (2)
-        {1, 0, 1, 0, 1, 0, 0}, //D (3)
-        {0, 0, 1, 1, 0, 0, 0}, //E (4)
-        {0, 0, 0, 0, 0, 0, 1}, //F (5)
-        {0, 1, 1, 0, 0, 1, 0}, //G (6)
-    };
+
+import main.util.Graphs;
+import main.util.Node;
+import main.util.Edge;
+
+public class GraphSolver {
  
 
     public static final int startedNode = 0; //A
     public static final int finalNode = 5; //F
 
     public static void run(int flag){
+        
+
         System.out.println("Algorithm: ");
         if (flag == 1) bfs();
         if (flag == 2) dfs();
+        if (flag == 3) ucs();
+        if (flag == 4) A(); //A*
     }
 
     public static void bfs() {
+        int[][] graph = Graphs.graph1; //Grafo sin adyacencias
+
         boolean[] confirmed = new boolean[graph.length];
         int[] parent = new int[graph.length];
         Arrays.fill(parent, -1);
@@ -79,6 +84,8 @@ public class GraphSolver {
     }
 
     public static void dfs() {
+        int[][] graph = Graphs.graph1; //Grafo sin adyacencias
+
         boolean[] visited = new boolean[graph.length];
         int[] parent = new int[graph.length];
 
@@ -123,6 +130,69 @@ public class GraphSolver {
         }
     }
 
+    public static void ucs() {
+        Node[] graph = Graphs.getGraph1WithAdjacencies(); //Grafo CON adyacencias
+        //{a, b, c, d, e, f, g}
+        Node source = graph[0]; //A
+        Node goal = graph[6]; //B
+        
+        source.pathCost = 0;
+        
+        PriorityQueue<Node> queue = new PriorityQueue<>(20, new Comparator<Node>() {
+            @Override
+            public int compare(Node i, Node j) {
+                return Double.compare(i.pathCost, j.pathCost);
+            }
+        });
 
+        queue.add(source);
+        Set<Node> explored = new HashSet<>();
+
+        while (!queue.isEmpty()) {
+            Node current = queue.poll();
+            System.out.println("Current: " + current.value);
+            explored.add(current);
+
+            if (current.value.equals(goal.value)) {
+                break; 
+            }
+
+            for (Edge e : current.adjacencies) {
+                Node child = e.target;
+                double cost = e.cost;
+                double newPathCost = current.pathCost + cost;
+                System.out.println("newPathCost: " + newPathCost);
+
+                
+                if (!explored.contains(child) && !queue.contains(child)) {
+                    child.pathCost = newPathCost;
+                    child.parent = current;
+                    queue.add(child);
+                } 
+                
+                else if (queue.contains(child) && newPathCost < child.pathCost) {
+                    child.parent = current;
+                    child.pathCost = newPathCost;
+
+                    // Reodernamiento
+                    queue.remove(child);
+                    queue.add(child);
+                }
+            }
+        }
+
+        
+        List<Node> path = new ArrayList<>();
+        for (Node node = goal; node != null; node = node.parent) {
+            path.add(node);
+        }
+        Collections.reverse(path);
+        
+        System.out.println("Path: " + path);
+    }
+
+    public static void A(){
+
+    }
 
 }

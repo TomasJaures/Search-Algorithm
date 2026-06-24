@@ -6,20 +6,11 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
+import main.util.Mazes;
+
 public class MazeSolver {
 
-    public static final int[][] maze = {
-
-    //   0  1  2  3  4  5  6  7
-        {0, 0, 1, 0, 0, 0, 0, 0}, // 0  
-        {0, 0, 1, 0, 0, 0, 0, 0}, // 1 
-        {0, 0, 0, 0, 0, 1, 0, 0}, // 2
-        {0, 0, 1, 0, 0, 1, 0, 0}, // 3
-        {0, 0, 1, 0, 0, 1, 0, 0}, // 4
-        {0, 0, 1, 0, 0, 1, 0, 0}, // 5
-        {0, 0, 1, 0, 0, 1, 0, 0}, // 6
-        {0, 0, 1, 0, 0, 1, 0, 0}  // 7
-    };
+    
 
     static class Pos {
         public int x, y;
@@ -37,9 +28,13 @@ public class MazeSolver {
         //asd
         if (flag == 1) bfs();
         if (flag == 2) dfs();
+        if (flag == 3) ucs();
     }
 
     public static void bfs(){
+
+        int[][] maze = Mazes.maze1;
+
         int rowsLen = maze.length;
         int colsLen = maze[0].length;
 
@@ -101,6 +96,8 @@ public class MazeSolver {
     }
 
     public static void dfs() {
+        int[][] maze = Mazes.maze1;
+
         int rowsLen = maze.length;
         int colsLen = maze[0].length;
 
@@ -162,5 +159,9 @@ public class MazeSolver {
         for (Pos p : path) {
             System.out.println("(" + p.y + ", " + p.x + ")");
         }
+    }
+
+    public static void ucs(){
+        bfs(); //UCS en grafos con adyacencias de igual nivel, es igual a BFS
     }
 }

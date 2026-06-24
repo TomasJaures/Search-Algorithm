@@ -45,25 +45,9 @@ public class Main {
     }
 
     public static void graph() {
-        System.out.print(
-            """
-            ========================================
-            Haz seleccionado el Grafo
-
-            Porfavor, seleccione el tipo de algoritmo que desea realizar:
-
-            [0] BFS
-            [1] DFS
-            [2] UCS
-            [3] A*
-            ========================================
-            >  """
-        );
-        
-        int r = sc.nextInt();
-        sc.nextLine();
         Path path = selectGraphFile();
-        GraphSolver.run(path, r);
+        GraphSolver.run(path);
+        
     }
 
     public static Path selectGraphFile() {
@@ -105,8 +89,6 @@ public class Main {
         
         return files.get(sc.nextInt());
     }
-
-    
 
     public static List<Path> getFiles(String path) {
         List<Path> files = null;

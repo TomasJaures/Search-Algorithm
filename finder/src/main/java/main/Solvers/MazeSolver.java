@@ -48,10 +48,6 @@ public class MazeSolver {
     public static int endX;
     public static int endY;
 
-    public static void main(String[] args) throws IOException {
-        run(Path.of("C:\\Users\\Tomas\\OneDrive\\Desktop\\MisCodigos\\Clases\\Proyecto de aplicacion\\Estudios\\Ejercicio Prog. Avanzada\\Search Algorithm\\finder\\src\\main\\resources\\CSVs\\Mazes\\Maze2.csv"));
-    }
-
     public static void run(Path path){
         MazeGrid gui = null;
         try {

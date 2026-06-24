@@ -1,206 +1,185 @@
 package main.Solvers;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
-import java.util.Stack;
-
-
-
-import main.util.Graphs;
+import java.util.*;
 import main.util.Node;
+import main.util.CSV.CsvSolver;
+import main.util.swing.UI;
 import main.util.Edge;
 
 public class GraphSolver {
  
+    public static String[][] csvGraph;
 
-    public static final int startedNode = 0; //A
-    public static final int finalNode = 5; //F
+    public static void run(Path path){
+        csvGraph = null;
+        try {
+            csvGraph = CsvSolver.getGraphData(path);
+        } catch (Exception e) {
+            System.out.println("Hubo un problema con el CSV (Asegurse que este en el formato correcto)");
+            e.printStackTrace();
+            return;
+        }
 
-    public static void run(Path path, int flag){
-        //[0] BFS
-        //[1] DFS
-        //[2] UCS
-        //[3] A*
-
-        
-        
-        System.out.println("Algorithm: ");
-        /*
-        if (flag == 1) bfs();
-        if (flag == 2) dfs();
-        if (flag == 3) ucs();
-        if (flag == 4) A(); //A*
-         */
+        List<Node> nodes = getNodes(csvGraph);
+        UI ui = new UI("Grafo");
+        ui.run(nodes);
     }
 
-    public static void bfs() {
-        int[][] graph = Graphs.graph1; //Grafo sin adyacencias
+    public static List<Node> getNodes(String[][] csvGraph) {
+        Map<String, Node> nodeMap = new HashMap<>();
+        Map<String, List<Edge>> adjacencyMap = new HashMap<>();
 
-        boolean[] confirmed = new boolean[graph.length];
-        int[] parent = new int[graph.length];
-        Arrays.fill(parent, -1);
+        for (int i = 1; i < csvGraph.length; i++) {
+            String[] row = csvGraph[i];
+            String sourceName = row[0];
+            String targetName = row[1];
+            double cost = Double.parseDouble(row[2]);
 
-        Queue<Integer> q = new LinkedList<>();
-        StringBuilder sb = new StringBuilder();
+            nodeMap.putIfAbsent(sourceName, new Node(sourceName));
+            nodeMap.putIfAbsent(targetName, new Node(targetName));
 
-        q.offer(startedNode);
-        confirmed[startedNode] = true;
+            Node sourceNode = nodeMap.get(sourceName);
+            Node targetNode = nodeMap.get(targetName);
 
-        while (!q.isEmpty()) {
-            int c = q.poll();
-            sb.append((char) (c + 97)).append(" ");
+            //Arias de ida
+            Edge forwardEdge = new Edge(targetNode, cost);
+            adjacencyMap.putIfAbsent(sourceName, new ArrayList<>());
+            adjacencyMap.get(sourceName).add(forwardEdge);
 
-            if (c == finalNode) {
-                break; // destino encontrdo
+            //Arista de vuelta
+            Edge backwardEdge = new Edge(sourceNode, cost);
+            adjacencyMap.putIfAbsent(targetName, new ArrayList<>());
+            adjacencyMap.get(targetName).add(backwardEdge);
+        }
+
+        for (Map.Entry<String, List<Edge>> entry : adjacencyMap.entrySet()) {
+            Node node = nodeMap.get(entry.getKey());
+            List<Edge> edges = entry.getValue();
+            node.adjacencies = edges.toArray(new Edge[0]);
+        }
+
+        return new ArrayList<>(nodeMap.values());
+    }
+    
+    public static List<Node> bfs(List<Node> graph, Node start, Node end, Set<Node> visited) {
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(start);
+        visited.add(start);
+
+        boolean found = false;
+        while (!queue.isEmpty()) {
+            Node current = queue.poll();
+            if (current.equals(end)) {
+                found = true;
+                break;
             }
-
-            int[] residents = graph[c];
-            for (int i = 0; i < residents.length; i++) {
-                if (residents[i] == 1 && !confirmed[i]) {
-                    q.offer(i);
-                    confirmed[i] = true;
-                    parent[i] = c;
+            if (current.adjacencies == null) continue;
+            for (Edge e : current.adjacencies) {
+                if (!visited.contains(e.target)) {
+                    visited.add(e.target);
+                    e.target.parent = current;
+                    queue.add(e.target);
                 }
             }
         }
-
-        System.out.println("Nodos visitados: " + sb);
-        List<Integer> path = new ArrayList<>();
-        int current = finalNode;
-
-        while (current != -1) {
-            path.add(current);
-            current = parent[current];
-        }
-
-        Collections.reverse(path);
-
-        System.out.print("camino: ");
-        for (int node : path) {
-            System.out.print((char)(node + 97) + " ");
-        }
-        System.out.println();
+        return reconstructPath(end, found);
     }
 
-    public static void dfs() {
-        int[][] graph = Graphs.graph1; //Grafo sin adyacencias
+    public static List<Node> dfs(List<Node> graph, Node start, Node end, Set<Node> visited) {
+        Stack<Node> stack = new Stack<>();
+        stack.push(start);
 
-        boolean[] visited = new boolean[graph.length];
-        int[] parent = new int[graph.length];
+        boolean found = false;
+        while (!stack.isEmpty()) {
+            Node current = stack.pop();
+            if (!visited.contains(current)) {
+                visited.add(current);
+                if (current.equals(end)) {
+                    found = true;
+                    break;
+                }
+                if (current.adjacencies == null) continue;
+                for (int i = current.adjacencies.length - 1; i >= 0; i--) {
+                    Edge e = current.adjacencies[i];
+                    if (!visited.contains(e.target)) {
+                        e.target.parent = current;
+                        stack.push(e.target);
+                    }
+                }
+            }
+        }
+        return reconstructPath(end, found);
+    }
 
-        Arrays.fill(parent, -1);
+    public static List<Node> ucs(List<Node> graph, Node start, Node end, Set<Node> visited) {
+        PriorityQueue<Node> queue = new PriorityQueue<>(Comparator.comparingDouble(n -> n.pathCost));
+        start.pathCost = 0;
+        queue.add(start);
 
-        Stack<Integer> s = new Stack<>();
+        boolean found = false;
+        while (!queue.isEmpty()) {
+            Node current = queue.poll();
+            if (visited.contains(current)) continue;
+            visited.add(current);
 
-        s.push(startedNode);
-        visited[startedNode] = true;
-
-        while (!s.isEmpty()) {
-            int current = s.pop();
-
-            if (current == finalNode) {
+            if (current.equals(end)) {
+                found = true;
                 break;
             }
 
-            //Al revez por ser una pila
-            for (int i = graph[current].length - 1; i >= 0; i--) {
-                if (graph[current][i] == 1 && !visited[i]) {
-                    visited[i] = true;
-                    parent[i] = current;
-                    s.push(i);
+            if (current.adjacencies == null) continue;
+            for (Edge e : current.adjacencies) {
+                double newCost = current.pathCost + e.cost;
+                if (newCost < e.target.pathCost) {
+                    e.target.pathCost = newCost;
+                    e.target.parent = current;
+                    queue.add(e.target);
                 }
             }
         }
-
-        List<Integer> path = new ArrayList<>();
-
-        for (int current = finalNode;
-            current != -1;
-            current = parent[current]) {
-
-            path.add(current);
-        }
-
-        Collections.reverse(path);
-
-        System.out.println("Camino:");
-        for (int node : path) {
-            System.out.print((char)(node + 65) + " ");
-        }
+        return reconstructPath(end, found);
     }
 
-    public static void ucs() {
-        Node[] graph = Graphs.getGraph1WithAdjacencies(); //Grafo CON adyacencias
-        //{a, b, c, d, e, f, g}
-        Node source = graph[0]; //A
-        Node goal = graph[6]; //B
-        
-        source.pathCost = 0;
-        
-        PriorityQueue<Node> queue = new PriorityQueue<>(20, new Comparator<Node>() {
-            @Override
-            public int compare(Node i, Node j) {
-                return Double.compare(i.pathCost, j.pathCost);
-            }
-        });
+    public static List<Node> aStar(List<Node> graph, Node start, Node end, Set<Node> visited) {
+        PriorityQueue<Node> queue = new PriorityQueue<>(Comparator.comparingDouble(n -> n.pathCost));
+        start.pathCost = 0;
+        queue.add(start);
 
-        queue.add(source);
-        Set<Node> explored = new HashSet<>();
-
+        boolean found = false;
         while (!queue.isEmpty()) {
             Node current = queue.poll();
-            System.out.println("Current: " + current.value);
-            explored.add(current);
+            if (visited.contains(current)) continue;
+            visited.add(current);
 
-            if (current.value.equals(goal.value)) {
-                break; 
+            if (current.equals(end)) {
+                found = true;
+                break;
             }
 
+            if (current.adjacencies == null) continue;
             for (Edge e : current.adjacencies) {
-                Node child = e.target;
-                double cost = e.cost;
-                double newPathCost = current.pathCost + cost;
-                System.out.println("newPathCost: " + newPathCost);
+                double gScore = current.pathCost + e.cost;
+                double hScore = 0.0; 
+                double fScore = gScore + hScore;
 
-                
-                if (!explored.contains(child) && !queue.contains(child)) {
-                    child.pathCost = newPathCost;
-                    child.parent = current;
-                    queue.add(child);
-                } 
-                
-                else if (queue.contains(child) && newPathCost < child.pathCost) {
-                    child.parent = current;
-                    child.pathCost = newPathCost;
-
-                    // Reodernamiento
-                    queue.remove(child);
-                    queue.add(child);
+                if (fScore < e.target.pathCost) {
+                    e.target.pathCost = fScore;
+                    e.target.parent = current;
+                    queue.add(e.target);
                 }
             }
         }
+        return reconstructPath(end, found);
+    }
 
-        
+    private static List<Node> reconstructPath(Node end, boolean found) {
         List<Node> path = new ArrayList<>();
-        for (Node node = goal; node != null; node = node.parent) {
-            path.add(node);
+        if (!found) return path;
+        for (Node n = end; n != null; n = n.parent) {
+            path.add(n);
         }
         Collections.reverse(path);
-        
-        System.out.println("Path: " + path);
+        return path;
     }
-
-    public static void A(){
-
-    }
-
 }

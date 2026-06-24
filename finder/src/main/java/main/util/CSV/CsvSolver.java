@@ -4,6 +4,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -54,7 +55,7 @@ public final class CsvSolver {
             int totalFilas = filas.size();
             int totalColumnas = filas.get(0).size();
             
-            int[][] mazeData = new int[totalFilas][totalColumnas];
+            int[][] graphData = new int[totalFilas][totalColumnas];
 
             for (int i = 0; i < totalFilas; i++) {
                 CSVRecord fila = filas.get(i);
@@ -62,14 +63,46 @@ public final class CsvSolver {
                     // Si la celda existe, la convierte a entero; si no, por defecto pone 0 (muro o vacío)
                     if (j < fila.size()) {
                         String celdaLimpia = fila.get(j).replaceAll("[^\\d-]", "");
-                        mazeData[i][j] = Integer.parseInt(celdaLimpia);
+                        graphData[i][j] = Integer.parseInt(celdaLimpia);
                     } else {
-                        mazeData[i][j] = 0; 
+                        graphData[i][j] = 0; 
                     }
                 }
             }
 
-            return mazeData;
+            return graphData;
+        }
+    }
+
+    public static String[][] getGraphData(Path path) throws IOException {
+        String firstLine = Files.lines(path).findFirst().orElse("");
+        char delimitador = firstLine.contains(";") ? ';' : ',';
+
+        CSVFormat format = CSVFormat.DEFAULT.builder().setDelimiter(delimitador).build();
+
+        try (FileReader reader = new FileReader(path.toFile()); CSVParser csvParser = new CSVParser(reader, format)) {
+
+            List<CSVRecord> filas = csvParser.getRecords();
+            if (filas.isEmpty()) return new String[0][0];
+
+            int totalFilas = filas.size();
+            int totalColumnas = filas.get(0).size();
+            
+            String[][] graphData = new String[totalFilas][totalColumnas];
+
+            for (int i = 0; i < totalFilas; i++) {
+                CSVRecord fila = filas.get(i);
+                for (int j = 0; j < totalColumnas; j++) {
+                    // Si la celda existe, la convierte a entero; si no, por defecto pone 0 (muro o vacío)
+                    if (j < fila.size()) {
+                        graphData[i][j] = fila.get(j);
+                    } else {
+                        graphData[i][j] = "";
+                    }
+                }
+            }
+
+            return graphData;
         }
     }
 }

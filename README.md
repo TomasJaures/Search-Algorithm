@@ -2,6 +2,10 @@
 
 Proyecto desarrollado en Java que implementa los algoritmos de búsqueda **BFS**, **DFS**, **UCS** y **A*** sobre grafos y laberintos. Incluye visualización gráfica mediante Swing y lectura de datos desde archivos CSV.
 
+### Parentesis:
+
+> La explicacion de los algoritmos, del codigo y demas... Se encuentran en la carpeta de "`finder/doc/*`"
+
 ## Características
 
 * Implementación de BFS (Breadth-First Search).

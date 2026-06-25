@@ -1,6 +1,5 @@
 package main.Solvers;
 import java.awt.Color;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;

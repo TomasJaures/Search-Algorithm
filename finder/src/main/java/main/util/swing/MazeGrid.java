@@ -27,10 +27,7 @@ public class MazeGrid extends JFrame {
         setTopPanel(); //Panel superior
         setMaze();
     }
-
-    /**
-     * Creates the top bar with position inputs, dropdown list, and buttons.
-     */
+    
     private void setTopPanel() {
         JPanel topPanel = new JPanel(new GridBagLayout());
         topPanel.setBackground(Color.LIGHT_GRAY);

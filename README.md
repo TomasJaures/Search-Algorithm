@@ -1,37 +1,55 @@
-# Ejercicio de Algoritmos...
+# Ejercicio de Algoritmos de Búsqueda
 
-Proyecto en Java que implementa algoritmos de búsqueda (BFS, DFS, UCS y A*) aplicados a grafos y laberintos, con visualización en **Swing** y carga de datos desde archivos **CSV**.
+Proyecto desarrollado en Java que implementa los algoritmos de búsqueda **BFS**, **DFS**, **UCS** y **A*** sobre grafos y laberintos. Incluye visualización gráfica mediante Swing y lectura de datos desde archivos CSV.
 
-## Requisitos:
+## Características
 
-### Preinstalaciones ya hechas:
+* Implementación de BFS (Breadth-First Search).
+* Implementación de DFS (Depth-First Search).
+* Implementación de UCS (Uniform Cost Search).
+* Implementación de A* (A-Star).
+* Visualización gráfica de grafos.
+* Visualización gráfica de laberintos.
+* Carga de datos desde archivos CSV personalizados.
+* Animación del recorrido realizado por cada algoritmo.
 
-Para ejecutar el programa, es necesario tener Maven previamente instalado, de esta manera solo bastara con ejecutar lo siguiente desde la carpeta raiz del proyecto (finder):
+---
 
-- Java 17+
-- Maven 3.8+
+# Requisitos
 
-### Ejecucion
+## Software necesario
 
-Ejecutar la primera vez:
+* Java 17 o superior.
+* Maven 3.8 o superior.
+
+---
+
+# Ejecución
+
+Desde la carpeta raíz del proyecto (`finder`):
+
+## Primera ejecución
+
 ```bash
 mvn compile
 mvn exec:java "-Dexec.mainClass=main.Solvers.Main"
 ```
 
-Segunda vez
+## Ejecuciones posteriores
+
 ```bash
 mvn exec:java "-Dexec.mainClass=main.Solvers.Main"
 ```
 
-## ¿Como usar el programa? (Manual de uso)
-### Navegar menu inico
+---
 
-Al dar inicio al programa, el menu principal sera unicamente texto en terminal...
+# Manual de uso
 
-En este mini menu es necesario indicar el tipo de accion que queramos realizar. Ej:
+## Menú principal
 
-```bash
+Al iniciar el programa se mostrará un menú en la terminal:
+
+```text
 ========================================
 Manual de uso en README.md
 
@@ -41,22 +59,22 @@ Manual de uso en README.md
 ========================================
 ```
 
-Con este en mente... Podemos realizar la operacion escribiendo en la terminal, en este caso:
+Opciones disponibles:
 
-- Escribir `0` para analizar los algoritmos sobre **grafos**
-- Escribir `1` para analizar los algoritmos sobre **laberintos**
+* `0` → Analizar grafos.
+* `1` → Analizar laberintos.
 
-Y de esta manera el codigo nos llevara a la siguiente seccion
+---
 
---- 
+## Selección de archivos CSV
 
-### Cargar CSV personalizados
+Después de elegir el tipo de estructura, se mostrará una lista con los archivos CSV disponibles.
 
-Una vez pasado el menu anterior, el programa preguntara sobre que tipo de archivo `.csv` se desea realizar la operacion.
+Ejemplo:
 
-```bash
+```text
 ========================================
-Seleccione el archivo que desea aplicale el algoritmo:
+Seleccione el archivo que desea aplicar al algoritmo:
 
 [0] Graph1.csv
 [1] Graph2.csv
@@ -64,16 +82,25 @@ Seleccione el archivo que desea aplicale el algoritmo:
 ========================================
 ```
 
-Lo importante de este menu, es el hecho de que nosotros podemos cargar nuestros propios CSV personalizados.
+---
 
-Para ello, en la carpeta `finder\src\main\resources\CSVs`, habra dos subcarpetas:
+## Agregar archivos personalizados
 
-* ``Graphs\``
-* ``Mazes\``
+Los archivos CSV deben ubicarse en:
 
-En cada carpeta hay archivos de prueba ya creados dependiendo del tipo de estructura, si hay la necesidad de insertar un archivo nuevo propio, se debe guardar en la carpeta debida con el formato adecuado.
+```text
+src/main/resources/CSVs/
+```
 
-Ejemplo: **Grafo**
+y dentro de una de las siguientes carpetas:
+
+```text
+Graphs/
+Mazes/
+```
+
+### Formato para grafos
+
 ```csv
 Source;Target;Weight
 A;B;2
@@ -87,91 +114,114 @@ D;E;4
 G;F;8
 ```
 
-Ejemplo: **Laberinto**
+### Formato para laberintos
+
 ```csv
 0;0;0;1;0;0;0
 0;0;0;1;0;0;0
 0;0;0;1;0;0;0
 0;0;0;0;0;0;0
 0;0;0;1;0;0;0
-0;0;0;1;0;0;0
-0;0;0;1;0;0;0
-0;0;0;1;0;0;0
-0;0;0;1;0;0;0
-0;0;0;1;0;0;0
-0;0;0;1;0;0;0
-0;0;0;1;0;0;0
-0;0;0;1;0;0;0
-0;0;0;1;0;0;0
-0;0;0;1;0;0;0
+...
 ```
 
-NO se recomienda crear alguno de estos archivos de manera manual, debido a que los archivos `.csv` suelen dejar caracteres invisibles que son necesarios para el funcionamiento del codigo.
+### Recomendación
 
-Lo mas recomendable es exportar un archivo `.csv` desde Excel y guardarlo de manera directa.
+Se recomienda generar los archivos CSV utilizando Excel u otra herramienta similar y exportarlos directamente en formato CSV.
 
-Y en caso de que todo salga de manea correcta, el codigo deberia dar la opcion de elegir el nuevo archivo agregado a la carpeta indicada
+---
 
-### **GUI grafo**
+# Interfaz de Grafos
 
-Si hemos elegido el tipo de estructura "grafo" y elegido un archivo, entonces el codigo deberia de abrir una nueva ventana donde se pueda visualizar el grafo creado.
+Una vez seleccionado un archivo de grafos, se abrirá una ventana de visualización.
 
-<img src="Imgs/GraphExample.png" width=500px>
+<img src="finder/doc/Imgs/GraphExample.png" width="500">
 
-Dentro de esta Interfaz de usuario, podemos realizar diversas acciones:
+## Funciones disponibles
 
-* Si queremos definir un nodo inicial y un nodo final, podemos seleccionarlo en el campo "Start Node" y "End Node".
-* Si queremos definir el algoritmo de busqueda, podemos dar click en el campo "Algorithm" donde se nos desplegara las diversas opciones de algoritmos, siendo estos:
-    * BFS
-    * DFS
-    * UCS
-    * A*
+### Selección de nodos
 
-Por defecto, el codigo carga las aristas con peso, sin embargo si se realiza un algoritmo donde esto no se toma en cuenta, el algoritmo hara su recorrido como si este elemento no existiera.
+* Start Node → Nodo inicial.
+* End Node → Nodo objetivo.
 
-* Finalmente, si queremos ver la visualizacion en accion, debemos dar click en "FindPath" y nos mostrara una pequeña animacion sobre como el algoritmo va recorriendo los diversos NODOS.
+### Selección de algoritmo
 
-Si queremos probar otra combinacion, simplemente cambiamos los campos y damos click en "Find Path" nuevamente.
+* BFS
+* DFS
+* UCS
+* A*
 
-**IMPORTANTEs:**
+### Ejecución
+
+Presione **Find Path** para iniciar la búsqueda.
+
+Se mostrará una animación que representa el recorrido realizado por el algoritmo.
+
+Para realizar una nueva búsqueda basta con cambiar los parámetros y volver a presionar **Find Path**.
+
+## Información mostrada en consola
+
+Dependiendo del algoritmo seleccionado se mostrará:
+
+* Costo total del camino.
+* Cantidad de nodos del camino encontrado.
+
+---
+
+# Interfaz de Laberintos
+
+Una vez seleccionado un archivo de laberinto, se abrirá la ventana correspondiente.
+
+<img src="finder/doc/Imgs/MazeExample.png" width="500">
+
+## Configuración de posiciones
+
+Las coordenadas utilizan el formato:
+
+```text
+fila,columna
 ```
-En la terminal saldran alguna informacion extra, siendo estos:
-- El coste.
-- Cantidad de nodos del camino encontrado.
 
-En caso de ejecutar un algoritmo donde o no se considere la longitud de las aristas o el coste del grafo, no se mostrara la informacion.
+Ejemplos:
 
-Se entiende ademas que con la informacion entregada de manera visual, tambien se satisfacen requerimientos como "visualización gráfica", "camino encontrado", Etc.
+```text
+0,20
+20,0
 ```
 
-Por utlimo, en el caso de que se quiera cambiar de grafo, sera necesario terminar la ejecucion y correr nuevamente el programa.
+Donde `(0,0)` corresponde a la esquina superior izquierda del laberinto.
 
-### **GUI Laberinto**
+## Algoritmos disponibles
 
-Si hemos elegido el tipo de estructura "laberinto" y elegido su respectivo archivo, entonces el codigo deberia de abrir una nueva ventana donde se pueda visualizar el laberinto creado.
+* BFS
+* DFS
+* UCS
+* A*
 
+## Ejecución
 
-<img src="Imgs/MazeExample.png" width=500px>
+* **Asignar** → Guarda las posiciones inicial y final.
+* **Iniciar** → Ejecuta el algoritmo seleccionado.
+* **Clear** → Limpia la visualización actual.
 
-Dentro de esta Interfaz de usuario, podemos realizar las siguientes acciones:
+## Información mostrada en consola
 
-- Tanto en el campo "Posicion Inicial" y "Posicion Final", podemos definir mediante una coordenada en que posicion se encontrar el inicio y el final (Siendo `0,0` la esquina superior izquierda). Este sigue el siguiente formato:
+* Confirmación de si se encontró un camino.
+* Longitud del camino encontrado.
 
-    - Posicion inicial: `0,20`
-    - Posicion final: `20,0`
+---
 
-Y asignandolos dandole al boton de asignar.
+# Dependencias
 
-- A su vez, tambien podemos definir el tipo de algoritmo que recorrera el grafo:
-    - BFS
-    - DFS
-    - UCS
-    - A*
+El proyecto utiliza las siguientes librerías:
 
-- Finalmente, podemos iniciar la busqueda dandole al boton "Iniciar", y si queremos cambiar de campos, podemos darle al boton "Clear" para limpiar el camino creado.
+* Apache Commons CSV
+* Lombok
 
-```
-Adicionalmente, en la terminal saldra informacion como:
-- Si se ha encontrado el camino
-- El tamaño del camino encontado
-```
+---
+
+# Observaciones
+
+* Para cargar un nuevo archivo CSV es necesario reiniciar la ejecución del programa.
+* Los algoritmos BFS y DFS ignoran los pesos de las aristas.
+* UCS y A* consideran los costos definidos en el grafo.

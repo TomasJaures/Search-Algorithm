@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.util.*;
 import main.util.Node;
 import main.util.CSV.CsvSolver;
-import main.util.swing.UI;
+import main.util.swing.GraphUI;
 import main.util.Edge;
 
 public class GraphSolver {
@@ -22,7 +22,7 @@ public class GraphSolver {
         }
 
         List<Node> nodes = getNodes(csvGraph);
-        UI ui = new UI("Grafo");
+        GraphUI ui = new GraphUI("Grafo");
         ui.run(nodes);
     }
 
@@ -83,7 +83,7 @@ public class GraphSolver {
                 }
             }
         }
-        return reconstructPath(end, found);
+        return reconstructPath(end, found, "BFS");
     }
 
     public static List<Node> dfs(List<Node> graph, Node start, Node end, Set<Node> visited) {
@@ -109,7 +109,7 @@ public class GraphSolver {
                 }
             }
         }
-        return reconstructPath(end, found);
+        return reconstructPath(end, found, "DFS");
     }
 
     public static List<Node> ucs(List<Node> graph, Node start, Node end, Set<Node> visited) {
@@ -138,7 +138,7 @@ public class GraphSolver {
                 }
             }
         }
-        return reconstructPath(end, found);
+        return reconstructPath(end, found, "UCS");
     }
 
     public static List<Node> aStar(List<Node> graph, Node start, Node end, Set<Node> visited) {
@@ -170,12 +170,25 @@ public class GraphSolver {
                 }
             }
         }
-        return reconstructPath(end, found);
+        return reconstructPath(end, found, "ASTAR");
     }
 
-    private static List<Node> reconstructPath(Node end, boolean found) {
+    private static List<Node> reconstructPath(Node end, boolean found, String algorithm) {
         List<Node> path = new ArrayList<>();
-        if (!found) return path;
+        if (!found){
+            System.out.println("No se encontro el camino");
+            return path;
+        } else {
+            //Muestra el coste solo si es UCS o ASTAR el algoritmo lo pide
+            String result = (algorithm.equals("UCS") || algorithm.equals("ASTAR")) ? 
+            """
+            =====================
+            Coste: %s        
+            =====================
+            """.formatted(end.pathCost) : "";
+            System.out.println(result);
+        }
+        
         for (Node n = end; n != null; n = n.parent) {
             path.add(n);
         }

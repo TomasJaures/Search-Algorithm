@@ -258,7 +258,9 @@ public class MazeSolver {
 
     private static void drawFinalPath(Pos[][] parent, Pos start, Pos finish, MazeGrid gui) {
         if (parent[finish.x][finish.y] == null) {
+            System.out.println("====================");
             System.out.println("No existe un camino");
+            System.out.println("====================");
             return;
         }
 
@@ -269,8 +271,10 @@ public class MazeSolver {
         }
         Collections.reverse(path);
 
+        System.out.println("====================");
         System.out.println("Existe un camino");
         System.out.println("Recorrido: " + path.size());
+        System.out.println("====================");
         for (Pos p : path) {
             //Mostrarlo en la GUI
             if (!(p.x == start.x && p.y == start.y) && !(p.x == finish.x && p.y == finish.y)) {

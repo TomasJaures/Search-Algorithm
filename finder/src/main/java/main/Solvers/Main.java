@@ -9,8 +9,8 @@ import java.util.Scanner;
 public class Main {
 
     public static Scanner sc = new Scanner(System.in);
-    public static String graphFilesPath = "src\\main\\resources\\CSVs\\Graphs";
-    public static String mazeFilesPath = "src\\main\\resources\\CSVs\\Mazes";
+    public final static String graphFilesPath = "src\\main\\resources\\CSVs\\Graphs";
+    public final static String mazeFilesPath = "src\\main\\resources\\CSVs\\Mazes";
     
 
     public static void main(String[] args) {
